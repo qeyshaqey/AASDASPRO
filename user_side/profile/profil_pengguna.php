@@ -2,11 +2,13 @@
 session_start();
 include 'koneksi.php';
 
+// Cek apakah user sudah login
 if (!isset($_SESSION['user_id'])) {
   header("Location: ../../autentikasi/login.php");
   exit();
 }
 
+// Dapatkan ID user dari sesi
 $id = $_SESSION['user_id'];
 $query = "SELECT * FROM users WHERE id='$id'";
 $result = mysqli_query($koneksi, $query);
@@ -18,6 +20,7 @@ $user = mysqli_fetch_assoc($result);
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Profile - IF1A2 TaskMeet</title>
+  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
@@ -111,7 +114,7 @@ $user = mysqli_fetch_assoc($result);
 
 <body>
   <div class="toast-container" id="toastContainer"></div>
-
+  <!-- Sidebar Toggle -->
   <div class="sidebar" id="sidebar">
     <div class="text-center mb-4">
       <img src="../../admin_side/format_gambar/logo.png" width="110" class="rounded-circle mb-2">
@@ -122,15 +125,18 @@ $user = mysqli_fetch_assoc($result);
     <a class="fw-bold" href="profil_pengguna.php"><i class="bi bi-person-circle me-2"></i> Profil</a>
     <div class="position-absolute bottom-0 w-100">
       <hr>
+      <!-- Logout Button -->
       <a class="fw-bold" href="../../autentikasi/logout.php"><i class="bi bi-box-arrow-right me-2"></i> Keluar</a>
     </div>
   </div>
 
   <button class="toggle-btn d-md-none" id="toggleBtn"><i class="bi bi-list"></i></button>
 
+  <!-- Main Content -->
   <div class="main-content">
     <h2 class="fw-bold text-white"><i class="bi bi-gear-fill me-2"></i> Pengaturan Profil</h2>
 
+    <!-- Profile Card -->
     <section class="profile-card">
       <div>
         <img src="https://via.placeholder.com/300x300.png?text=Foto+Profil" id="profileImage" class="profile-img">
@@ -227,6 +233,7 @@ $user = mysqli_fetch_assoc($result);
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
+    // Sidebar Toggle
     document.getElementById('toggleBtn')?.addEventListener('click', () =>
       document.getElementById('sidebar').classList.toggle('active'));
 
@@ -245,6 +252,7 @@ $user = mysqli_fetch_assoc($result);
     const editJurusan = document.getElementById('editJurusan');
     const editProdi = document.getElementById('editProdi');
 
+    //  Fungsi untuk menampilkan toast
     function showToast(message, type = 'success') {
       const toastContainer = document.getElementById('toastContainer');
       const icon = type === 'success' ? '<i class="bi bi-check-circle-fill text-success me-2"></i>' : '<i class="bi bi-exclamation-circle-fill text-danger me-2"></i>';
@@ -265,6 +273,7 @@ $user = mysqli_fetch_assoc($result);
       toastElement.addEventListener('hidden.bs.toast', function () { toastElement.remove(); });
     }
 
+    // Fungsi untuk memuat data profil
     async function loadProfile() {
       const res = await fetch("get_profile.php");
       const user = await res.json();
@@ -281,6 +290,7 @@ $user = mysqli_fetch_assoc($result);
       }
     }
 
+    // preview gambar saat diubah
     editPhoto.addEventListener("change", e => {
       const file = e.target.files[0];
       if (!file) return;
@@ -289,6 +299,7 @@ $user = mysqli_fetch_assoc($result);
       reader.readAsDataURL(file);
     });
 
+    // Isi form edit saat modal dibuka
     document.getElementById("editProfileModal").addEventListener("show.bs.modal", () => {
       editUsername.value = profileUsername.textContent;
       editName.value = profileName.textContent;
@@ -301,6 +312,7 @@ $user = mysqli_fetch_assoc($result);
       document.getElementById("passwordConfirm").value = "";
     });
 
+    // mengelola submit form edit profil
     document.getElementById("editProfileForm").addEventListener("submit", async function(e) {
       e.preventDefault();
 

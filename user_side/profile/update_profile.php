@@ -2,31 +2,37 @@
 session_start();
 include "koneksi.php";
 
+// Cek apakah user sudah login
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(["success" => false, "message" => "NO_SESSION"]);
     exit();
 }
 
+// Dapatkan ID user dari sesi
 $id = $_SESSION['user_id'];
 
 $q = mysqli_query($koneksi, "SELECT * FROM users WHERE id='$id'");
 $user = mysqli_fetch_assoc($q);
 
+// Cek apakah user ditemukan
 if (!$user) {
     echo json_encode(["success" => false, "message" => "USER_NOT_FOUND"]);
     exit();
 }
 
+// Ambil data dari form
 $username = mysqli_real_escape_string($koneksi, $_POST['username']);
 $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
 $email = mysqli_real_escape_string($koneksi, $_POST['email']);
 $jurusan = mysqli_real_escape_string($koneksi, $_POST['jurusan']);
 $prodi = mysqli_real_escape_string($koneksi, $_POST['prodi']);
 
+// Data password
 $oldPass = $_POST['passwordOld'] ?? "";
 $newPass = $_POST['passwordNew'] ?? "";
 $confirm = $_POST['passwordConfirm'] ?? "";
 
+// Validasi unik username jika diubah
 if ($username !== $user['username']) {
     $checkUsername = mysqli_query($koneksi, "SELECT id FROM users WHERE username='$username' AND id != '$id'");
     if (mysqli_num_rows($checkUsername) > 0) {
@@ -35,8 +41,10 @@ if ($username !== $user['username']) {
     }
 }
 
+// Proses upload foto jika ada
 $fotoBaru = $user['foto'];
 
+// Jika ada file foto yang diupload
 if (!empty($_FILES['foto']['name'])) {
     $folderUpload = __DIR__ . "/uploads/";
 
@@ -61,6 +69,7 @@ if (!empty($_FILES['foto']['name'])) {
     $fotoBaru = $namaFile;
 }
 
+// Proses update password jika ada perubahan
 $updatePasswordSQL = "";
 
 if ($oldPass != "" || $newPass != "" || $confirm != "") {
@@ -83,6 +92,7 @@ if ($oldPass != "" || $newPass != "" || $confirm != "") {
     $updatePasswordSQL = ", password='$hashedNewPassword'";
 }
 
+// Update data user di database
 $sql = "UPDATE users SET 
             username='$username',
             full_name='$nama',
@@ -93,6 +103,7 @@ $sql = "UPDATE users SET
             $updatePasswordSQL
         WHERE id='$id'";
 
+// 
 if (mysqli_query($koneksi, $sql)) {
     $_SESSION['username'] = $username;
     $_SESSION['full_name'] = $nama;
