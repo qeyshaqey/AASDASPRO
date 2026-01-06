@@ -162,7 +162,6 @@
 
                 .sidebar.show~.content {
                     margin-left: 260px;
-                    margin-left: 0 !important;
                 }
 
                 .table-responsive {
@@ -183,15 +182,12 @@
 
             @media (max-width: 768px) {
                 #agendaTable {
-                    table-layout: fixed;
-                    width: 1200px;
+                    font-size: 0.85rem;
                 }
 
                 #agendaTable th,
                 #agendaTable td {
-                    padding: 8px 5px;
-                    white-space: nowrap;
-                    vertical-align: middle;
+                    padding: 8px 4px;
                 }
 
                 .btn-sm {
@@ -295,14 +291,6 @@
             .modal-confirm .btn-danger:hover {
                 background-color: #c82333;
                 border-color: #bd2130;
-            }
-
-            @media (max-width: 768px) {
-                .peserta-column {
-                    white-space: normal !important;
-                    word-wrap: break-word;
-                    vertical-align: top;
-                }
             }
         </style>
     </head>
@@ -655,7 +643,6 @@
                         toastElement.remove();
                     });
                 }
-
                 // === FUNGSI UNTUK MEMUAT PESERTA ===
                 function loadPeserta(jurusan) {
                     console.log("Memuat peserta untuk jurusan:", jurusan);
@@ -690,7 +677,6 @@
                         }
                     });
                 }
-
                 // === EVENT LISTENER MODAL & FORM ===
                 $('#modalTambah').on('show.bs.modal', function() {
                     loadPeserta($('#jurusanInput').val());
@@ -720,14 +706,12 @@
                         $('#zoomLinkInput').removeClass('d-none');
                     }
                 });
-
                 // === DATATABLES ===
                 const table = $('#agendaTable').DataTable({
                     processing: true,
                     serverSide: true,
-                    responsive: false,
-                    scrollX: false,
-                    autoWidth: false,
+                    responsive: true,
+                    scrollX: true,
                     pageLength: 5,
                     dom: 'Bfrtip',
                     buttons: [{
@@ -790,35 +774,28 @@
                             d.filterJurusan = $('#filterJenis').val();
                         }
                     },
-
                     columns: [{
                             data: null,
                             orderable: false,
                             className: 'text-center',
-                            width: "50px",
                             render: function(data, type, row, meta) {
                                 return meta.row + meta.settings._iDisplayStart + 1;
                             }
                         },
                         {
-                            data: 'judul_rapat',
-                            width: "250px"
+                            data: 'judul_rapat'
                         },
                         {
-                            data: 'jurusan',
-                            width: "150px"
+                            data: 'jurusan'
                         },
                         {
-                            data: 'tanggal',
-                            width: "120px"
+                            data: 'tanggal'
                         },
                         {
-                            data: 'waktu',
-                            width: "100px"
+                            data: 'waktu'
                         },
                         {
                             data: 'tempat',
-                            width: "200px",
                             render: function(data, type, row) {
                                 if (row.tipe_tempat === 'online') {
                                     return `<a href="${data}" target="_blank" class="text-primary text-decoration-none">Link Meeting</a>`;
@@ -828,32 +805,15 @@
                             }
                         },
                         {
-                            data: 'host',
-                            width: "180px"
+                            data: 'host'
                         },
                         {
-                            data: 'peserta',
-                            width: "220px",
-                            createdCell: function(td, cellData, rowData, row, col) {
-                                $(td).addClass('peserta-column');
-                            },
-                            render: function(data, type, row, meta) {
-                                if (type !== 'display') {
-                                    return data;
-                                }
-                                if (!data) {
-                                    return '-';
-                                }
-                                return data.split(',').map(function(nama) {
-                                    return nama.trim();
-                                }).join('<br>');
-                            }
+                            data: 'peserta'
                         },
                         {
                             data: null,
                             orderable: false,
                             className: 'text-center',
-                            width: "100px",
                             render: function(data, type, row) {
                                 return `<button class="btn btn-primary btn-sm text-white fw-semibold btn-detail" data-id="${row.id}">Detail</button>`;
                             }
@@ -948,7 +908,6 @@
                         }
                     });
                 });
-
                 // --- FUNGSI UNTUK MENAMPILKAN MODAL KONFIRMASI KUSTOM ---
                 function showConfirmModal(message, onConfirm) {
                     $('#confirmMessage').text(message);
@@ -960,7 +919,6 @@
                     });
                     new bootstrap.Modal(document.getElementById('modalConfirm')).show();
                 }
-
                 // --- HAPUS ---
                 $('#btnHapusDetail').on('click', function() {
                     const agendaId = $('#modalDetail').data('agenda-id');
@@ -991,7 +949,6 @@
                         });
                     });
                 });
-
                 // --- EDIT ---
                 $('#btnEditDetail').on('click', function() {
                     const data = $('#modalDetail').data('agenda-data');
@@ -1012,7 +969,6 @@
                     $('#modalDetail').modal('hide');
                     $('#modalEdit').modal('show');
                 });
-
                 // --- SIMPAN EDIT ---
                 $('#btnSimpanEdit').on('click', function() {
                     const agendaId = $('#modalEdit').data('agenda-id');

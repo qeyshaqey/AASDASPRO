@@ -1,26 +1,44 @@
 <?php
+// Menentukan response dalam format JSON
 header('Content-Type: application/json');
+
+// Memuat konfigurasi dan koneksi database
 require_once 'config.php';
 
- $jurusan = isset($_GET['jurusan']) ? $_GET['jurusan'] : '';
+// Mengambil parameter jurusan dari request GET (jika ada)
+$jurusan = isset($_GET['jurusan']) ? $_GET['jurusan'] : '';
 
- $sql = "SELECT id, full_name as nama FROM users WHERE role = 'user'";
+// Query dasar untuk mengambil data user dengan role "user"
+$sql = "SELECT id, full_name as nama FROM users WHERE role = 'user'";
+
+// Menambahkan filter jurusan jika parameter dikirim
 if (!empty($jurusan)) {
     $sql .= " AND jurusan = ?";
 }
 
- $stmt = $conn->prepare($sql);
+// Menyiapkan query menggunakan prepared statement
+$stmt = $conn->prepare($sql);
+
+// Binding parameter jurusan jika filter digunakan
 if (!empty($jurusan)) {
     $stmt->bind_param("s", $jurusan);
 }
- $stmt->execute();
- $result = $stmt->get_result();
 
- $peserta = [];
+// Menjalankan query
+$stmt->execute();
+
+// Mengambil hasil query
+$result = $stmt->get_result();
+
+// Menyimpan data peserta ke dalam array
+$peserta = [];
 while ($row = $result->fetch_assoc()) {
     $peserta[] = $row;
 }
 
+// Mengirim data peserta dalam format JSON
 echo json_encode($peserta);
- $conn->close();
+
+// Menutup koneksi database
+$conn->close();
 ?>
