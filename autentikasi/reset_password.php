@@ -2,13 +2,16 @@
 require_once 'session.php';
 require_once 'auth.php';
 
+// Inisialisasi variabel
  $error = '';
  $success = '';
  $reset_link = '';
 
+// Proses form saat disubmit
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
 
+    // Validasi email
     if (empty($email)) {
         $error = 'Email harus diisi';
     } else {
@@ -21,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($result->num_rows === 1) {
             $user = $result->fetch_assoc();
 
+            // Buat token reset password
             $token = bin2hex(random_bytes(32));
             $expiry = date('Y-m-d H:i:s', strtotime('+24 hours'));
 
@@ -46,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lupa Password</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -147,9 +152,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <div class="form-container">
+        <!-- LOGO dan JUDUL -->
         <img width="150" height="150" src="../admin_side/format_gambar/logo.png" alt="Logo">
         <h3>Atur Ulang Kata Sandi Pengguna</h3>
         
+        <!-- Tampilkan pesan error atau sukses -->
         <?php if (!empty($error)): ?>
             <div class="alert alert-danger"><?php echo $error; ?></div>
         <?php endif; ?>
@@ -162,7 +169,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <a href="<?php echo $reset_link; ?>" target="_blank"><?php echo $reset_link; ?></a>
                 </div>
             <?php endif; ?>
-        <?php endif; ?>        
+        <?php endif; ?>       
+        
+        <!-- Form untuk mengirimkan email reset password -->
         <?php if (empty($reset_link)): ?>
             <form action="reset_password.php" method="post">
                 <div class="input-group">
@@ -173,6 +182,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <button type="submit">Buat Link Reset</button>
             </form>
         <?php endif; ?>
+
+        <!-- Link kembali ke halaman login -->
         <div class="back-to-login">
             <a href="login.php">
                 <i class="fas fa-arrow-left me-1"></i> Kembali masuk

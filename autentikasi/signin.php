@@ -2,13 +2,16 @@
 require_once 'session.php';
 require_once 'auth.php';
 
+// Redirect jika sudah login
 if (is_logged_in()) {
     redirect('../user_side/dashboard_p/dashboard_pengguna.php');
 }
 
+// Inisialisasi variabel
  $error = '';
  $success = '';
 
+// Proses form saat disubmit
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $email = $_POST['email'];
@@ -18,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $jurusan = $_POST['jurusan'];
     $prodi = $_POST['prodi'];
     
+    // Validasi input
     if (empty($username) || empty($email) || empty($password) || empty($full_name) || empty($jurusan) || empty($prodi)) {
         $error = 'Semua field wajib diisi';
     } elseif ($password !== $confirm_password) {
@@ -147,13 +151,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <form action="signin.php" method="post">
+        <!-- LOGO dan JUDUL -->
         <img width="150" height="150" src="../admin_side/format_gambar/logo.png" alt="Logo">
         <h3 class="text-center">Daftar ke sesi Anda</h3>
         
+        <!-- Tampilkan pesan error -->
         <?php if (!empty($error)): ?>
             <div class="alert alert-danger"><?php echo $error; ?></div>
         <?php endif; ?>
         
+        <!-- Form untuk input data pengguna -->
         <div class="input-group">
             <i class="fas fa-envelope"></i>
             <input type="email" id="email" name="email" placeholder="Email" required>
