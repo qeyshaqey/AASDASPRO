@@ -1,7 +1,12 @@
 <?php
+// Memanggil file konfigurasi untuk koneksi database
 require_once 'config.php';
 
- $sql = "UPDATE agendas SET status = 
+// Query untuk memperbarui status rapat berdasarkan waktu saat ini
+// - Jika status sudah "selesai", tidak diubah
+// - Jika waktu rapat sudah lewat, status menjadi "berlangsung"
+// - Jika belum dimulai, status menjadi "akan datang"
+$sql = "UPDATE agendas SET status = 
         CASE 
             WHEN status = 'selesai' THEN 'selesai'
             WHEN CONCAT(tanggal, ' ', waktu) < NOW() THEN 'berlangsung'
@@ -9,11 +14,21 @@ require_once 'config.php';
         END
         WHERE status != 'selesai'";
 
+// Mengeksekusi query update status
 if ($conn->query($sql)) {
-    echo json_encode(['success' => true, 'message' => 'Status rapat berhasil diperbarui']);
+    // Response JSON jika update berhasil
+    echo json_encode([
+        'success' => true,
+        'message' => 'Status rapat berhasil diperbarui'
+    ]);
 } else {
-    echo json_encode(['success' => false, 'message' => 'Gagal memperbarui status: ' . $conn->error]);
+    // Response JSON jika update gagal
+    echo json_encode([
+        'success' => false,
+        'message' => 'Gagal memperbarui status: ' . $conn->error
+    ]);
 }
 
- $conn->close();
+// Menutup koneksi database
+$conn->close();
 ?>
