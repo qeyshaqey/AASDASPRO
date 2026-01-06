@@ -1,4 +1,6 @@
 <?php
+//
+//memeriksa status login pengguna
 require_once 'session.php';
 require_once 'functions.php';
 

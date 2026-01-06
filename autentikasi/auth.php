@@ -2,6 +2,7 @@
 require_once '../admin_side/daftar_agenda/config.php';
 require_once 'functions.php';
 
+//proses login dan registrasi pengguna
 function login($username, $password) {
     global $conn;
     
@@ -11,6 +12,7 @@ function login($username, $password) {
     $stmt->execute();
     $result = $stmt->get_result();
     
+    //
     if ($result->num_rows === 1) {
         $user = $result->fetch_assoc();
         
