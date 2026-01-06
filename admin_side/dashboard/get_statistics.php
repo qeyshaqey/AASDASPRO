@@ -2,6 +2,7 @@
 header('Content-Type: application/json');
 require_once '../daftar_agenda/config.php';
 
+// Dapatkan statistik dari database
 $sqlPeserta = "SELECT COUNT(*) as total FROM users WHERE role = 'user'";
 $resultPeserta = $conn->query($sqlPeserta);
 $totalPeserta = $resultPeserta->fetch_assoc()['total'];

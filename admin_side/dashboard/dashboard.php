@@ -2,9 +2,11 @@
 require_once '../../autentikasi/session.php';
 require_once '../../autentikasi/functions.php';
 
+// Redirect ke halaman login jika belum login
 if (!is_logged_in()) {
     redirect('../../autentikasi/login.php');
 }
+// Tampilkan notifikasi login sekali setelah login berhasil
 if (!isset($_SESSION['login_notified'])) {
     $_SESSION['show_login_notification'] = true;
     $_SESSION['login_notified'] = true;
@@ -16,6 +18,7 @@ if (!isset($_SESSION['login_notified'])) {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Dashboard - IF1A2 TASK MEET</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
@@ -204,6 +207,7 @@ if (!isset($_SESSION['login_notified'])) {
     </style>
 </head>
 <body>
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container-fluid d-flex align-items-center">
             <button class="toggle-floating" id="btnToggleFloating" title="Toggle menu">
@@ -216,6 +220,8 @@ if (!isset($_SESSION['login_notified'])) {
         </div>
     </nav>
     <div class="overlay" id="overlay"></div>
+
+    <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <h4>Menu</h4>
         <nav class="nav flex-column">
@@ -226,14 +232,17 @@ if (!isset($_SESSION['login_notified'])) {
             <hr>
             <a class="nav-link" href="../../autentikasi/logout.php"><i class="fas fa-sign-out-alt"></i> Keluar</a>
         </nav>
-    </aside>    
+    </aside>
+    
+    <!-- Content -->
     <main class="content">
         <div class="container-fluid">
             <h4 class="mb-3 fw-semibold">Selamat Datang, <?php echo $_SESSION['full_name']; ?></h4>
 
             <div class="d-flex justify-content-between flex-wrap align-items-center mb-3">
                 <div></div>
-                
+
+                <!-- Filter Jurusan dan Status -->
                 <div class="d-flex gap-2 align-items-center mt-2 mt-md-0">
                     <select id="jenisRapat" class="form-select" style="width:200px;">
                         <option value="">Semua Jurusan</option>
@@ -254,6 +263,7 @@ if (!isset($_SESSION['login_notified'])) {
                 </div>
             </div>
 
+            <!-- Tabel Jadwal Rapat -->
             <div class="card p-3 shadow-sm">
                 <div class="table-responsive">
                     <table id="jadwalTable" class="table table-striped table-bordered">
@@ -296,11 +306,13 @@ if (!isset($_SESSION['login_notified'])) {
 
     <script>
     $(document).ready(function() {
+        // Tampilkan notifikasi login jika diperlukan
         <?php if (isset($_SESSION['show_login_notification']) && $_SESSION['show_login_notification']): ?>
                 const loginToast = new bootstrap.Toast(document.getElementById('loginSuccessToast'));
                 loginToast.show();
                 <?php unset($_SESSION['show_login_notification']); ?>
         <?php endif; ?>
+        // Inisialisasi DataTable
         const table = $('#jadwalTable').DataTable({
             pageLength: 10,
             lengthChange: false,
@@ -318,6 +330,7 @@ if (!isset($_SESSION['login_notified'])) {
             }
         });
 
+        // Fungsi untuk memuat dan merender data rapat
         function loadAndRenderRapat() {
             const jurusanFilter = $('#jenisRapat').val();
             const statusFilter = $('#filterStatus').val();
@@ -420,6 +433,7 @@ if (!isset($_SESSION['login_notified'])) {
         const btnToggle = document.getElementById('btnToggleFloating');
         const overlay = document.getElementById('overlay');
         
+        // Sidebar toggle
         btnToggle.addEventListener('click', () => {
             if (window.innerWidth < 992) {
                 sidebar.classList.toggle('show');
