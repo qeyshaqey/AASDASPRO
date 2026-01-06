@@ -1,3 +1,8 @@
+
+"""
+Daftar Peserta Bagian Admin
+"""
+
 <?php
 require_once '../../autentikasi/session.php';
 require_once '../../autentikasi/functions.php';
@@ -23,6 +28,7 @@ if (!is_logged_in()) {
     <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css" rel="stylesheet">
 
+    <!-- CSS Internal -->    
     <style>
         :root {
             --sidebar-w: 250px;
@@ -170,6 +176,7 @@ if (!is_logged_in()) {
     </style>
 </head>
 <body>
+
     <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container-fluid d-flex align-items-center">
@@ -183,6 +190,7 @@ if (!is_logged_in()) {
             </a>
         </div>
     </nav>
+
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
         <div class="overlay" id="overlay"></div>
@@ -196,17 +204,20 @@ if (!is_logged_in()) {
             <a class="nav-link" href="../../autentikasi/logout.php"><i class="fas fa-sign-out-alt"></i> Keluar</a>
         </nav>
     </aside>
+
     <!-- MAIN CONTENT -->
     <main class="content">
         <div class="container-fluid"> 
             <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
                 <h4 class="fw-semibold mb-2 mb-md-0">Daftar Peserta</h4> 
             </div>
+
             <!-- INFO BOX -->
             <div class="info-badge">
                 <i class="fas fa-info-circle me-2"></i>
                 <strong>Informasi:</strong> Daftar peserta ini diisi otomatis saat pengguna melakukan registrasi. Admin hanya dapat melihat data, tidak dapat mengedit atau menghapus.
             </div>
+            
             <!-- FILTER JURUSAN -->
             <div class="mb-3">
                 <label class="form-label fw-semibold">Filter Jurusan:</label>
@@ -232,6 +243,8 @@ if (!is_logged_in()) {
                                 <th style="width:120px;">Tanggal Daftar</th>
                             </tr>
                         </thead>
+
+                        <!--untuk menampilkan data peserta yang memiliki peran sebagai pengguna dari tabel users pada database-->
                         <tbody>
                             <?php 
                             $data_peserta = mysqli_query($koneksi, "SELECT * FROM users WHERE role = 'user' ORDER BY created_at DESC");
@@ -278,6 +291,7 @@ if (!is_logged_in()) {
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
 
+    <!--Konfigurasi DataTables-->
     <script>
     $(document).ready(function () {
         // --- INISIALISASI DATATABLES ---

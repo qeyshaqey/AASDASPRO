@@ -1,5 +1,8 @@
+
 <?php
 include "koneksi.php";
+
+//mengambil data pengguna berdasarkan id
 
  $id = $_GET['id'];
 

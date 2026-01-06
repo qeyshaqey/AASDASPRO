@@ -1,6 +1,8 @@
 <?php
 header('Content-Type: application/json');
 
+//menyediakan data program studi (prodi) berdasarkan jurusan yang dipilih oleh pengguna
+
  $jurusan = $_GET['jurusan'] ?? '';
 
  $prodiData = [
