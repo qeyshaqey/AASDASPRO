@@ -1,3 +1,8 @@
+
+"""
+Detail Rapat Bagian Pengguna
+"""
+
 <?php
 require_once '../../autentikasi/session.php';
 require_once '../../autentikasi/functions.php';
@@ -7,6 +12,7 @@ if (!is_logged_in() || is_admin()) {
     redirect('../../autentikasi/login.php');
 }
 
+//mengambil seluruh data rapat yang diikuti oleh pengguna berdasarkan ID
 $user_id = $_SESSION['user_id'];
 
 $sql = "SELECT a.id, a.judul_rapat, a.tanggal, a.waktu, a.lokasi, a.tipe_tempat, ap.status_kehadiran
@@ -19,6 +25,7 @@ $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
+//berisi data kehadiran pengguna pada rapat
 $totalHadir = 0;
 $totalTidakHadir = 0;
 $allData = [];
@@ -35,6 +42,7 @@ while ($row = $result->fetch_assoc()) {
 $totalRapat = count($allData);
 $persentase = $totalRapat > 0 ? round(($totalHadir / $totalRapat) * 100) : 0;
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -45,6 +53,7 @@ $persentase = $totalRapat > 0 ? round(($totalHadir / $totalRapat) * 100) : 0;
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
   <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 
+  <!--CSS internal-->
   <style>
     body {
       background: linear-gradient(180deg, #784B84, #D7BFDC);
@@ -115,6 +124,7 @@ $persentase = $totalRapat > 0 ? round(($totalHadir / $totalRapat) * 100) : 0;
   </style>
 </head>
 
+<!--sidebar-->
 <body>
   <div class="sidebar" id="sidebar">
     <div class="text-center mb-4">
@@ -132,6 +142,7 @@ $persentase = $totalRapat > 0 ? round(($totalHadir / $totalRapat) * 100) : 0;
 
   <button class="toggle-btn d-md-none" id="toggleBtn"><i class="bi bi-list"></i></button>
 
+  <!--main content-->
   <div class="main-content">
     <div class="row g-3">
       <div class="col-lg-12">
@@ -172,6 +183,8 @@ $persentase = $totalRapat > 0 ? round(($totalHadir / $totalRapat) * 100) : 0;
                   <th>Status Kehadiran</th>
                 </tr>
               </thead>
+
+              <!--daftar rapat yang diikuti oleh pengguna ke dalam tabel-->
               <tbody>
                 <?php 
                 $no = 1;
@@ -221,6 +234,7 @@ $persentase = $totalRapat > 0 ? round(($totalHadir / $totalRapat) * 100) : 0;
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
+  <!--tabel riwayat rapat menjadi lebih interaktif-->
   <script>
   $(document).ready(function() {
     $('#riwayatTable').DataTable({
