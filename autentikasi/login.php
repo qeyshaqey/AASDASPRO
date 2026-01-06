@@ -1,50 +1,75 @@
 <?php
+// Memanggil file session untuk manajemen sesi user
 require_once 'session.php';
+
+// Memanggil file auth untuk fungsi autentikasi (login, cek login)
 require_once 'auth.php';
 
- $success_message = '';
+// Variabel untuk menyimpan pesan sukses setelah registrasi
+$success_message = '';
+
+// Mengecek apakah user baru saja selesai registrasi
 if (isset($_GET['registered']) && $_GET['registered'] == 1) {
     $success_message = 'Registrasi berhasil! Silakan login dengan akun Anda.';
 }
+
+// Jika user sudah login, langsung redirect ke dashboard admin
 if (is_logged_in()) {
     redirect('../admin_side/dashboard/dashboard.php');
 }
 
- $error = '';
- $success = '';
+// Variabel untuk menyimpan pesan error dan sukses
+$error = '';
+$success = '';
 
+// Mengecek apakah request berasal dari form (POST)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    // Mengambil input username, password, dan jenis user
     $username = $_POST['username'];
     $password = $_POST['password'];
     $user_type = $_POST['jenis'];
     
+    // Validasi input kosong
     if (empty($username) || empty($password)) {
         $error = 'Username dan password harus diisi';
     } else {
+
+        // Proses login sebagai Admin
         if ($user_type === 'Admin') {
+            // Kredensial admin (hardcoded)
             $admin_username = 'admin';
             $admin_password = 'admin123';
             
+            // Validasi login admin
             if ($username === $admin_username && $password === $admin_password) {
+                // Menyimpan data admin ke dalam session
                 $_SESSION['user_id'] = 0;
                 $_SESSION['username'] = $admin_username;
                 $_SESSION['full_name'] = 'Administrator';
                 $_SESSION['user_role'] = 'admin';
                 
+                // Fitur remember me menggunakan cookie
                 if (isset($_POST['remember']) && $_POST['remember'] === 'on') {
-                    setcookie('remember_admin', $admin_username, time() + (86400 * 30), "/"); // 30 days
+                    setcookie('remember_admin', $admin_username, time() + (86400 * 30), "/"); // 30 hari
                 }
                 
+                // Redirect ke dashboard admin
                 redirect('../admin_side/dashboard/dashboard.php');
             } else {
                 $error = 'Username atau password admin salah';
             }
+
+        // Proses login sebagai User
         } else {
             if (login($username, $password)) {
+
+                // Fitur remember me untuk user
                 if (isset($_POST['remember']) && $_POST['remember'] === 'on') {
-                    setcookie('remember_user', $username, time() + (86400 * 30), "/"); // 30 days
+                    setcookie('remember_user', $username, time() + (86400 * 30), "/"); // 30 hari
                 }
                 
+                // Redirect ke dashboard user
                 redirect('../user_side/dashboard_p/dashboard_pengguna.php');
             } else {
                 $error = 'Username atau password salah';
@@ -57,12 +82,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <!-- Pengaturan responsive layout -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Halaman Login</title>
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome for icons -->
+
+    <!-- Font Awesome untuk ikon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
         body {
             display: flex;
@@ -211,18 +240,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </style>
 </head>
 <body>
+    <!-- Form login -->
     <form action="login.php" method="post">
         <img width="150" height="150" src="../admin_side/format_gambar/logo.png" alt="Logo">
         <h3 style="text-align: center;">Masuk ke sesi Anda</h3>
         
+        <!-- Menampilkan pesan sukses -->
         <?php if (!empty($success_message)): ?>
             <div class="alert alert-success"><?php echo $success_message; ?></div>
         <?php endif; ?>
         
+        <!-- Menampilkan pesan error -->
         <?php if (!empty($error)): ?>
             <div class="alert alert-danger"><?php echo $error; ?></div>
         <?php endif; ?>
-        
+
+        <!-- Pilihan jenis user -->
         <div class="input-group">
             <i class="fas fa-user"></i>
             <select name="jenis">
@@ -231,16 +264,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <option value="User">Pengguna</option>
             </select>
         </div>
-        
+
+        <!-- Input username -->
         <div class="input-group">
             <i class="fas fa-user-circle"></i>
             <input type="text" id="username" name="username" placeholder="Nama Pengguna" required>
         </div>
 
+        <!-- Input password -->
         <div class="input-group">
             <i class="fas fa-lock"></i>
             <input type="password" id="password" name="password" placeholder="Kata Sandi" required>
-        </div>        
+        </div>
+
+        <!-- Opsi remember me dan lupa password -->
         <div class="form-options">
             <div class="remember-me">
                 <input type="checkbox" id="remember" name="remember">
@@ -248,9 +285,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <a href="reset_password.php" class="forgot-password">Lupa Kata Sandi?</a>
         </div>
-        
+
         <button type="submit">Masuk</button>
-        
+
         <div class="sign">
             <p>Belum ada akun?<a href="signin.php"> Daftar</a></p>
         </div>
@@ -258,15 +295,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
+        // Script untuk fitur remember me menggunakan localStorage
         document.addEventListener('DOMContentLoaded', function() {
             const rememberCheckbox = document.getElementById('remember');
             const usernameInput = document.getElementById('username');
             const jenisSelect = document.querySelector('select[name="jenis"]');
             
+            // Mengambil data user yang tersimpan
             const rememberedAdmin = localStorage.getItem('rememberedAdmin');
             const rememberedUser = localStorage.getItem('rememberedUser');
             
+            // Mengisi otomatis jika data ditemukan
             if (rememberedAdmin) {
                 usernameInput.value = rememberedAdmin;
                 jenisSelect.value = 'Admin';
@@ -277,7 +318,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 rememberCheckbox.checked = true;
             }
             
-            document.querySelector('form').addEventListener('submit', function(e) {
+            // Menyimpan atau menghapus data saat submit
+            document.querySelector('form').addEventListener('submit', function() {
                 if (rememberCheckbox.checked) {
                     if (jenisSelect.value === 'Admin') {
                         localStorage.setItem('rememberedAdmin', usernameInput.value);
